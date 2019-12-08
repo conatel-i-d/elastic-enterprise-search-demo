@@ -1,0 +1,14 @@
+---
+- name: Elastic Enterprise Search DEMO
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - ../vars.yml
+  vars:
+    state: present
+  tasks:
+    - import_tasks: tasks/demo-up.yml
+      when: state == "present"
+
+    - import_tasks: tasks/demo-down.yml
+      when: state == "absent"

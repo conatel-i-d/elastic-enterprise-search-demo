@@ -1,0 +1,11 @@
+state: present
+project_path: ./lib
+cluster_name: elastic-enterprise-search
+network_host: 0.0.0.0
+elasticsearch_port: 9200
+kibana_port: 5601
+enterprise_search_port: 3002
+xpack_security_enabled: true
+xpack_security_audit_enabled: true
+elastic_username: elastic
+elastic_password: 

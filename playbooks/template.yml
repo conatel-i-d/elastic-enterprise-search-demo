@@ -1,0 +1,9 @@
+---
+- name: Create file from template
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Create file
+      template:
+        src: '{{ src }}'
+        dest: '{{ dest }}' 

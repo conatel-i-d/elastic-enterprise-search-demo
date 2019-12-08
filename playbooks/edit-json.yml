@@ -1,0 +1,21 @@
+---
+- name: Update json file
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Load JSON file
+      set_fact:
+        json_file: '{{ lookup("file", file_path) | from_json }}'
+
+    - name: Update the JSON file
+      set_fact:
+        json_file: '{{ json_file | combine({key: value}) }}'
+
+    - name: Save edited JSON file
+      copy:
+        content: '{{ json_file }}'
+        dest: '{{ file_path }}'
+
+    - debug:
+        msg: '{{ lookup("file", file_path) | from_json }}'
+

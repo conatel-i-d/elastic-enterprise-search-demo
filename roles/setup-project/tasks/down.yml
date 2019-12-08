@@ -1,0 +1,15 @@
+- name: Delete project folder
+  file:
+    path: '{{ project_path }}'
+    state: absent
+    mode: '0755'
+
+- name: Delete other files
+  file:
+    path: '{{ item }}'
+    state: absent
+  loop:
+    - ../passwords.txt
+    - ../passwords.yml
+
+

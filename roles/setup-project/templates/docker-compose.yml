@@ -1,0 +1,45 @@
+version: '3'
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.2
+    ports:
+      - {{ elasticsearch_port }}:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - es-network
+  enterprise-search:
+    container_name: enterprise-search
+    image: elastic/enterprise-search:latest
+    volumes:
+      - ./enterprise-search.yml:/usr/src/enterprise-search/config/enterprise-search.yml
+    ports:
+      - {{ enterprise_search_port }}:3002
+    networks:
+      - es-network
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.4.2
+    ports:
+      - {{ kibana_port }}:5601
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - es-network
+
+volumes:
+  es-data:
+    driver: local
+ 
+networks:
+  es-network:

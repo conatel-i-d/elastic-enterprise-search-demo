@@ -1,0 +1,67 @@
+---
+- name: Parse passwords file
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - ../vars.yml
+  tasks:
+    - name: Get the generated passwords from the vault
+      set_fact:
+        passwords: > 
+          {{ 
+            lookup("file", "../passwords.txt") 
+            | parse_cli("playbooks/specs/passwords.yml")
+            | json_query("list[0]")
+          }}
+
+    - name: Create the passwords.yml file
+      shell: >
+        echo "{{ passwords | to_nice_yaml }}" \
+        | ansible-vault encrypt               \ 
+          --output=../passwords.yml           \
+          --vault-password-file=../password
+    
+    - name: Delete passwords.txt file
+      file:
+        path: ../passwords.txt
+        state: absent
+
+    - name: Load passwords file as variables
+      include_vars:
+        file: ../passwords.yml
+
+    - name: Activate the Elastic Platinum 30 days trial
+      uri:
+        url: "http://localhost:9200/_license/start_trial?acknowledge=true"
+        user: '{{ elastic_username }}'
+        password: '{{ elastic_password }}'
+        force_basic_auth: yes
+        method: POST
+        status_code: 200
+        body_format: json
+
+    - import_tasks: tasks/demo-up.yml
+
+    - name: Wait for 5 minute to let the project boot
+      pause:
+        minutes: 5
+
+    - name: Get the Enterprise Search password
+      shell: "docker logs enterprise-search | grep password: | awk '{print $5}'"
+      register: output
+
+    - name: Update the passwords object
+      set_fact:
+        passwords: '{{ passwords | combine({"enterprise_search": output.stdout}) }}'
+    
+    - name: Recreate the passwords.yml file
+      shell: >
+        echo "{{ passwords | to_nice_yaml }}" \
+        | ansible-vault encrypt               \ 
+          --output=../passwords.yml           \
+          --vault-password-file=../password
+    
+
+
+
+

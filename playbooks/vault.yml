@@ -1,0 +1,12 @@
+---
+- name: Encrypt file using ansible vault
+  hosts: localhost
+  gather_facts: no
+  vars:
+    test:
+      something: is
+      awesome: true
+  tasks:
+    - name: Encrypt the file
+      shell: 'echo "{{ test | to_nice_yaml }}" | ansible-vault encrypt --output=test.txt --vault-password-file=../password'
+

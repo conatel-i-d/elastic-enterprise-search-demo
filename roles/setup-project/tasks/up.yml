@@ -1,0 +1,15 @@
+- name: Create project folder
+  file:
+    path: '{{ project_path }}'
+    state: directory
+    mode: '0755'
+
+- name: Create project files from templates
+  template:
+    src: '{{ item }}'
+    dest: '{{ project_path }}/{{ item }}'
+  loop:
+    - docker-compose.yml
+    - elasticsearch.yml
+    - enterprise-search.yml
+    - kibana.yml

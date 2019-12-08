@@ -1,0 +1,4 @@
+- name: Create private key
+  openssl_privatekey:
+    path: '{{ path }}'
+    force: '{{ force }}'

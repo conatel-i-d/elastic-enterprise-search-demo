@@ -1,0 +1,15 @@
+- name: Run docker-compose down
+  block:
+    - docker_compose:
+        project_src: '{{ project_path }}'
+        state: absent
+        restarted: yes
+        remove_volumes: yes
+        remove_orphans: yes
+  rescue:
+    - debug:
+        msg: "No docker-compose.yml file found at {{ project_path }}"
+
+- name: Destroy Project
+  include_role:
+    name: setup-project

@@ -1,0 +1,14 @@
+- debug:
+    var: elastic_password
+
+- name: Setup Project
+  include_role:
+    name: setup-project
+
+- name: Run docker-compose up
+  docker_compose:
+    project_src: '{{ project_path }}'
+    state: present
+    restarted: yes
+    remove_volumes: yes
+    remove_orphans: yes
